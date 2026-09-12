@@ -11,13 +11,16 @@ const files=required.map(f=>[f,fs.readFileSync(f,'utf8')])
 const client=fs.readFileSync('app/page.tsx','utf8')
 if(/process\.env\.(GROQ_API_KEY|APPLETOKEN_API_KEY)/.test(client)) throw new Error('Server secret referenced from client source')
 for(const [f,s] of files){
-  if (/from ['\"]openai['\"]|from ['\"]@supabase\/supabase-js['\"]/.test(s)) throw new Error(`Removed dependency still imported in ${f}`)
+  if (/from ['"]openai['"]|from ['"]@supabase\/supabase-js['"]/.test(s)) throw new Error(`Removed dependency still imported in ${f}`)
 }
-for (const token of ["'/api/appletoken/quote'", 'input_references', 'SET MASTER', "'/api/health'", "'/api/appletoken/assets'", 'Reference Library', 'selectedRefIds']) {
-  if(!client.includes(token)) throw new Error(`Expected V0.4 workflow token missing: ${token}`)
-}
+const tokens=[
+  "'/api/appletoken/quote'",'input_references',"'/api/health'", "'/api/appletoken/assets'",
+  'V0.5 · SHOT WORKSPACE','Shot Workspace','PROJECT REFERENCES','bottomComposer','heroTakeByShot',
+  'shotRefIds','LOCK IDENTITY','GENERATE KEYFRAME','SELECT HERO','@MasterCharacter'
+]
+for(const token of tokens){ if(!client.includes(token)) throw new Error(`Expected V0.5 workflow token missing: ${token}`) }
 const assets=fs.readFileSync('app/api/appletoken/assets/route.ts','utf8')
 if(!assets.includes("appleTokenFetch('/assets'") || !assets.includes('/assets/${encodeURIComponent(id)}')) throw new Error('AppleToken asset proxy incomplete')
 const prompt=fs.readFileSync('app/api/prompt/route.ts','utf8')
 if(!prompt.includes('/models') || !prompt.includes('MODEL_PRIORITY')) throw new Error('Groq live-model fallback missing')
-console.log('AI Film Studio V0.4 source checks: PASS')
+console.log('AI Film Studio V0.5 source checks: PASS')
