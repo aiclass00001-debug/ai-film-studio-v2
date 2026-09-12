@@ -1,8 +1,10 @@
 {
   "name": "ai-film-studio",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
