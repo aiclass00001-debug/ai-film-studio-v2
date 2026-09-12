@@ -1,28 +1,21 @@
-# Verification — AI Film Studio V0.3
+# AI Film Studio V0.4 — Verification
 
-## Fixed from V0.2
+Checked before packaging:
 
-- Removed `openai` package and all `import OpenAI from "openai"` usage.
-- Removed `@supabase/supabase-js`, Supabase server code, and Supabase schema dependency.
-- Removed Zod dependency; Prompt Director uses tolerant JSON normalization instead.
-- Groq is called with native server-side `fetch`.
-- Groq model is checked against the live `/models` endpoint and falls back to an available production model.
-- Groq JSON mode automatically retries without `response_format` if a compatible model rejects it.
-- API errors expose safe upstream status/details to the UI instead of only `Groq API request failed`.
-- Added `/api/health` and visible provider status badges.
-- AppleToken model-list parsing accepts `data`, `models`, or a raw array and can infer image/video modality from common model names.
+- `node scripts/check.mjs` — PASS
+- TypeScript/TSX syntax transpile — PASS (13 source files)
+- TypeScript semantic check with temporary external-module stubs — PASS
+- Client secret scan — PASS (no Groq / AppleToken server keys referenced from `app/page.tsx`)
+- AppleToken Assets proxy route present — PASS
+- Reference-guided video (`input_references`) present — PASS
+- Multi-media Reference Library + selected reference flow present — PASS
+- Browser local reference persistence (text/URL) present — PASS
+- IndexedDB media-preview cache present — PASS
 
-## Static checks performed before packaging
+## Full Next.js production build
 
-- TypeScript parser/transpile check on every `.ts` and `.tsx` file.
-- No OpenAI SDK imports.
-- No Supabase SDK imports.
-- No server secrets referenced from client source.
-- Prompt route contains Groq live-model fallback.
-- Health endpoint exists.
-- AppleToken Quote / image / video / status / content routes exist.
-- Reference-guided video flow and Master Character flow remain present.
+A full `npm install && npm run build` could not be completed in this execution environment because the npm registry request timed out. The source was instead parser-checked and semantic-type-checked locally. After uploading to GitHub/Vercel, Vercel should run the authoritative production build with real Next/React packages.
 
-## Runtime limitation
+## Upload limit note
 
-A true production `next build` requires installing npm dependencies. If the build environment cannot access npm, static checks can still pass while a network install cannot be performed. Vercel itself has network access and should perform the actual dependency install/build.
+AppleToken Assets accepts supported files up to 20 MB, but Vercel serverless request-body limits can be lower. V0.4 conservatively limits direct uploads through this proxy to 3 MB per file. Use `+ URL` for larger audio/video references until direct storage upload is added.
